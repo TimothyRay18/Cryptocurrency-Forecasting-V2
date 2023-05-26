@@ -15,21 +15,6 @@ class Preprocessing:
         df_sorted = df.sort_values(by=['Date']).copy()
         df_sorted_index = df_sorted.reset_index(drop=True)
         return df_sorted_index
-    def handle_duplicate(df):
-        df = df.drop_duplicates()
-        print("duplicate ok")
-        return df
-    def handle_missing_value(df):
-        missing_cols = df.isnull().stack()[lambda x: x].index.tolist()
-        if missing_cols == []:
-            print("No missing value")
-            return df
-        else:
-            print(missing_col)
-            for x in missing_cols:
-                df.at[x[0], x[1]] = df.at[x[0]-1, x[1]]
-            print("Missing value ok")
-            return df
     def minmax_scale(df):
         FEATURES = ['Open', 'High', 'Low', 'Volume USDT', 'Close']
         scaler = MinMaxScaler()
@@ -49,6 +34,7 @@ class Preprocessing:
     def create_dataset(dataset, time_step=1, index=4):
         dataX = []
         dataY = []
+        
         for i in range(len(dataset)-time_step):
             dataX.append(dataset[i:(i+time_step)])
             dataY.append(float(dataset[i+time_step][index]))
@@ -76,17 +62,21 @@ class Evaluation:
 class LSTMUnit:
     def train_lstm(train_X, train_y, test_X, test_y, neuron, epoch, batch):
         model = Sequential()
-        model.add(LSTM(neuron, kernel_initializer=initializers.GlorotUniform(seed=42), input_shape=(train_X.shape[1], train_X.shape[2])))
+        model.add(LSTM(neuron, kernel_initializer=initializers.GlorotUniform(seed=42), 
+                       input_shape=(train_X.shape[1], train_X.shape[2])))
         model.add(Dense(units=1, kernel_initializer=initializers.GlorotUniform(seed=42)))
         model.compile(loss='mse',optimizer='adam')
-        history = model.fit(train_X, train_y, epochs=epoch, batch_size=batch, validation_data=(test_X, test_y), verbose=2, shuffle=False)
+        history = model.fit(train_X, train_y, epochs=epoch, batch_size=batch, 
+                            validation_data=(test_X, test_y), verbose=2, shuffle=False)
         return model, history
     def train_bilstm(train_X, train_y, test_X, test_y, neuron, epoch, batch):
         model = Sequential()
-        model.add(Bidirectional(LSTM(neuron, kernel_initializer=initializers.GlorotUniform(seed=42), input_shape=(train_X.shape[1], train_X.shape[2]))))
+        model.add(Bidirectional(LSTM(neuron, kernel_initializer=initializers.GlorotUniform(seed=42), 
+                                     input_shape=(train_X.shape[1], train_X.shape[2]))))
         model.add(Dense(units=1, kernel_initializer=initializers.GlorotUniform(seed=42)))
         model.compile(loss='mse',optimizer='adam')
-        history = model.fit(train_X, train_y, epochs=epoch, batch_size=batch, validation_data=(test_X, test_y), verbose=2, shuffle=False)
+        history = model.fit(train_X, train_y, epochs=epoch, batch_size=batch, 
+                            validation_data=(test_X, test_y), verbose=2, shuffle=False)
         return model, history
     def predict(x, model):
         yhat = model.predict(x)

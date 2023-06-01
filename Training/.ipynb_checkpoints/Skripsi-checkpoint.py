@@ -78,9 +78,6 @@ class LSTMUnit:
         history = model.fit(train_X, train_y, epochs=epoch, batch_size=batch, 
                             validation_data=(test_X, test_y), verbose=2, shuffle=False)
         return model, history
-    def predict(x, model):
-        yhat = model.predict(x)
-        return yhat
     def save_model(model, category, crypto_name, hyperparam):
         if category == 0:
             model.save('LSTM_'+ crypto_name +str(hyperparam)+'.h5')

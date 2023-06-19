@@ -59,19 +59,19 @@ class Evaluation:
         mean_absolute_percentage_error = sum_absolute_difference / len(y)
         return (mean_absolute_percentage_error*100)[0]
     
-class LSTMUnit:
-    def train_lstm(train_X, train_y, test_X, test_y, neuron, epoch, batch):
+class NeuralNetwork:
+    def train_lstm(train_X, train_y, test_X, test_y, unit, epoch, batch):
         model = Sequential()
-        model.add(LSTM(neuron, kernel_initializer=initializers.GlorotUniform(seed=42), 
+        model.add(LSTM(unit, kernel_initializer=initializers.GlorotUniform(seed=42), 
                        input_shape=(train_X.shape[1], train_X.shape[2])))
         model.add(Dense(units=1, kernel_initializer=initializers.GlorotUniform(seed=42)))
         model.compile(loss='mse',optimizer='adam')
         history = model.fit(train_X, train_y, epochs=epoch, batch_size=batch, 
                             validation_data=(test_X, test_y), verbose=2, shuffle=False)
         return model, history
-    def train_bilstm(train_X, train_y, test_X, test_y, neuron, epoch, batch):
+    def train_bilstm(train_X, train_y, test_X, test_y, unit, epoch, batch):
         model = Sequential()
-        model.add(Bidirectional(LSTM(neuron, kernel_initializer=initializers.GlorotUniform(seed=42), 
+        model.add(Bidirectional(LSTM(unit, kernel_initializer=initializers.GlorotUniform(seed=42), 
                                      input_shape=(train_X.shape[1], train_X.shape[2]))))
         model.add(Dense(units=1, kernel_initializer=initializers.GlorotUniform(seed=42)))
         model.compile(loss='mse',optimizer='adam')

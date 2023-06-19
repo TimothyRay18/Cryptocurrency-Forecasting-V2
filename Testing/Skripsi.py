@@ -11,26 +11,11 @@ from tensorflow.keras import initializers
 tf.random.set_seed(42)
 
 class Preprocessing:
-    def feature_selection(df):
+    def sort_df(df):
         df_sorted = df.sort_values(by=['Date']).copy()
         FEATURES = ['Open', 'High', 'Low', 'Volume USDT', 'Close']
         df_filtered = df_sorted[FEATURES].reset_index(drop=True)
         return df_filtered
-    def handle_duplicate(df):
-        df = df.drop_duplicates()
-        print("duplicate ok")
-        return df
-    def handle_missing_value(df):
-        missing_cols = df.isnull().stack()[lambda x: x].index.tolist()
-        if missing_cols == []:
-            print("No missing value")
-            return df
-        else:
-            print(missing_col)
-            for x in missing_cols:
-                df.at[x[0], x[1]] = df.at[x[0]-1, x[1]]
-            print("Missing value ok")
-            return df
     def minmax_scale(df):
         scaler = MinMaxScaler()
         df_scaled = scaler.fit_transform(np.array(df))

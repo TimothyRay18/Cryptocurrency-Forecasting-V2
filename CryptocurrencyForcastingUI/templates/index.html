@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en" data-bs-theme="auto">
+  <head>
+<!--    <script src="../assets/js/color-modes.js"></script>-->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.111.3">
+    <title>Cryptocurrency Forecasting</title>
+    <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1200px-Bitcoin.svg.png">
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/dashboard/">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/dataTables.bootstrap5.min.css">
+<!--    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">-->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+<!--    <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>-->
+    <script src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <style>
+      body{
+        font-variant-numeric: tabular-nums;
+      }
+      #chart_div {
+        height: 400px;
+        width: 100%;
+      }
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+      .b-example-divider {
+        width: 100%;
+        height: 3rem;
+        background-color: rgba(0, 0, 0, .1);
+        border: solid rgba(0, 0, 0, .15);
+        border-width: 1px 0;
+        box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+      }
+
+      .b-example-vr {
+        flex-shrink: 0;
+        width: 1.5rem;
+        height: 100vh;
+      }
+
+      .bi {
+        vertical-align: -.125em;
+        fill: currentColor;
+      }
+
+      .nav-scroller {
+        position: relative;
+        z-index: 2;
+        height: 2.75rem;
+        overflow-y: hidden;
+      }
+
+      .nav-scroller .nav {
+        display: flex;
+        flex-wrap: nowrap;
+        padding-bottom: 1rem;
+        margin-top: -1px;
+        overflow-x: auto;
+        text-align: center;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .btn-bd-primary {
+        --bd-violet-bg: #712cf9;
+        --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
+
+        --bs-btn-font-weight: 600;
+        --bs-btn-color: var(--bs-white);
+        --bs-btn-bg: var(--bd-violet-bg);
+        --bs-btn-border-color: var(--bd-violet-bg);
+        --bs-btn-hover-color: var(--bs-white);
+        --bs-btn-hover-bg: #6528e0;
+        --bs-btn-hover-border-color: #6528e0;
+        --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
+        --bs-btn-active-color: var(--bs-btn-hover-color);
+        --bs-btn-active-bg: #5a23c8;
+        --bs-btn-active-border-color: #5a23c8;
+      }
+      .bd-mode-toggle {
+        z-index: 1500;
+      }
+      #time_span {
+        width: 33%
+      }
+    </style>
+
+  </head>
+  <body>
+    <div class="container-fluid">
+<!--      <div class="row">-->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mx-md-auto">
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Forecast</h1>
+            <form id="forecast-form" action='{{ url_for("index") }}' method="post">
+              <div class="btn-toolbar mb-2 mb-md-0">
+                  <select id="crypto" name="crypto" class="form-select mr-2" aria-label="Default select example" required>
+                    <option selected disabled value="">Cryptocurrency</option>
+                    <option value="BTC" {% if crypto == 'BTC' %}selected{% endif %} >BTC</option>
+                    <option value="ETH" {% if crypto == 'ETH' %}selected{% endif %} >ETH</option>
+                    <option value="LTC" {% if crypto == 'LTC' %}selected{% endif %} >LTC</option>
+                  </select>
+                  <select id="method" name="method" class="form-select mr-2" aria-label="Default select example" required>
+                    <option selected disabled value="">Method</option>
+                    <option value="LSTM" {% if method == 'LSTM' %}selected{% endif %} >LSTM</option>
+                    <option value="BiLSTM" {% if method == 'BiLSTM' %}selected{% endif %} >BiLTSM</option>
+                  </select>
+                  <select id="batch" name="batch" class="form-select mr-2" aria-label="Default select example" required>
+                    <option selected disabled value="">Batch Size</option>
+                    <option value="32" {% if batch == '32' %}selected{% endif %} >32</option>
+                    <option value="64" {% if batch == '64' %}selected{% endif %} >64</option>
+                    <option value="128" {% if batch == '128' %}selected{% endif %} >128</option>
+                  </select>
+                  <select id="epoch" name="epoch" class="form-select mr-2" aria-label="Default select example" required>
+                    <option selected disabled value="">Epoch</option>
+                    <option value="25" {% if epoch == '25' %}selected{% endif %} >25</option>
+                    <option value="50" {% if epoch == '50' %}selected{% endif %} >50</option>
+                    <option value="100" {% if epoch == '100' %}selected{% endif %} >100</option>
+                  </select>
+                  <select id="unit" name="unit" class="form-select mr-2" aria-label="Default select example" required>
+                    <option selected disabled value="">Unit</option>
+                    <option value="50" {% if unit == '50' %}selected{% endif %} >50</option>
+                    <option value="60" {% if unit == '60' %}selected{% endif %}>60</option>
+                    <option value="100" {% if unit == '100' %}selected{% endif %}>100</option>
+                  </select>
+                  <select id="time" name="time" class="form-select" aria-label="Default select example" required>
+                    <option selected disabled value="">Time Span</option>
+                    <option value="24" {% if time == '24' %}selected{% endif %} >1 day</option>
+                    <option value="168" {% if time == '168' %}selected{% endif %}>1 week</option>
+                    <option value="720" {% if time == '720' %}selected{% endif %}>1 month</option>
+                  </select>
+                <button type="submit" class="btn btn-primary ml-2">Forecast</button>
+              </div>
+            </form>
+          </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Batch size: {{batch}}</p>
+                        <p>Epoch: {{epoch}}</p>
+                        <p>Unit: {{unit}}</p>
+                    </div>
+                    <div class="col-md-4">
+                        {% if date_test is defined %}
+                        <p>From: {{ date_test[0] }}</p>
+                        <p>To: {{ date_test[len(date_test)-1]}}</p>
+                        {% else %}
+                        <p>From: </p>
+                        <p>To: </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+          <div id="chart_div"></div>
+
+          <h2>Details</h2>
+          <div class="table-responsive" id="table">
+            <table class="table table-striped table-sm" id="table_detail">
+              <thead>
+                <tr>
+                  <th style="width:30%">Time Step</th>
+                  <th style="width:23.5%">Real</th>
+                  <th style="width:23.5%">Prediction</th>
+                  <th style="width:23%">Difference</th>
+                </tr>
+              </thead>
+              <tbody>
+                  {% for i in range(len(yhat))%}
+                    <tr>
+                      <td>{{ date_test[i] }}</td>
+                      <td>{{ ytrue[i]|round(2) }}</td>
+                      <td>{{ yhat[i]|round(4) }}</td>
+                      <td>{{ (yhat[i]-ytrue[i])|round(4) }}</td>
+                    </tr>
+                  {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </main>
+      </div>
+<!--    </div>-->
+  </body>
+  <script>
+    $(document).ready(function() {
+      $('#table_detail').DataTable({
+        "paging": true,
+        "ordering": true,
+        "info": true,
+        "lengthMenu": [24, 50, 100],
+      });
+    });
+    document.addEventListener("DOMContentLoaded", function() {
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var data = new google.visualization.DataTable();
+
+        // Add columns to the data table
+        data.addColumn('string', 'Date');
+        data.addColumn('number', 'Prediction');
+        data.addColumn('number', 'Real');
+
+        var ypred = {{ yhat|default('[]')|tojson }};
+        var date = {{date_test|default('[]')|tojson }};
+        var yactual = {{ ytrue|default('[]')|tojson}};
+
+        for (var i = 0; i < date.length; i++) {
+          data.addRow([date[i], ypred[i], yactual[i]]);
+        }
+
+        // Define chart options
+        var options = {
+          title: 'Forecast vs Real',
+          curveType: 'function',
+          legend: { position: 'bottom' }
+        };
+
+        // Create a line chart
+        var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+
+        // Draw the chart with data and options
+        chart.draw(data, options);
+      }
+    });
+  </script>
+</html>
